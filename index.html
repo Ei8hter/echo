@@ -138,12 +138,13 @@ h1,h2,h3,h4{font-family:var(--display); font-weight:600; line-height:1.02; lette
 .hero__cta{display:flex; gap:16px; margin-top:40px; flex-wrap:wrap}
 .btn{
   display:inline-flex; align-items:center; gap:12px; cursor:pointer;
+  background:transparent; -webkit-appearance:none; appearance:none; font-weight:inherit;
   font-family:var(--mono); font-size:13px; letter-spacing:.1em; text-transform:uppercase;
   padding:15px 26px; border-radius:100px; border:1px solid transparent; transition:.4s var(--ease)
 }
 .btn--solid{background:var(--sand); color:#181712}
 .btn--solid:hover{background:#fff; transform:translateY(-2px)}
-.btn--ghost{border-color:var(--line-2); color:var(--text)}
+.btn--ghost{border-color:var(--line-2); color:var(--text); background:transparent}
 .btn--ghost:hover{border-color:var(--sand); color:var(--sand)}
 .btn .arr{transition:transform .4s var(--ease)}
 .btn:hover .arr{transform:translateX(4px)}
@@ -193,6 +194,16 @@ section{position:relative}
   .work__grid .card--feature{grid-column:span 2; aspect-ratio:16/8}
 }
 .card__canvas{position:absolute; inset:0; z-index:-1}
+/* legibility scrims over photography */
+.card__img::after{content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(to top, rgba(16,15,13,.94) 0%, rgba(16,15,13,.78) 22%, rgba(16,15,13,.28) 52%, rgba(16,15,13,.10) 72%, rgba(16,15,13,.42) 100%)}
+.card .card__cat{text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.card__title{text-shadow:0 2px 10px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.45)}
+.card__meta{text-shadow:0 1px 4px rgba(0,0,0,.6); color:var(--text)}
+.pv-hero-img::after{content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(to top, rgba(16,15,13,.92) 0%, rgba(16,15,13,.55) 32%, rgba(16,15,13,.12) 62%, rgba(16,15,13,.35) 100%)}
+.ph-cap h1{text-shadow:0 3px 16px rgba(0,0,0,.6), 0 1px 3px rgba(0,0,0,.5)}
+.ph-cap .ph-cat{text-shadow:0 1px 5px rgba(0,0,0,.6)}
 .card__img{position:absolute; inset:0; z-index:-1; background-size:cover; background-position:center; transition:transform .7s var(--ease)}
 .card:hover .card__img{transform:scale(1.04)}
 .pview__hero .pv-hero-img{position:absolute; inset:0; background-size:cover; background-position:center}
@@ -791,7 +802,7 @@ const T = {
   work_eyebrow:{en:'Selected work',ro:'Proiecte selectate'},
   work_title:{en:'Projects as studies, not galleries.',ro:'Proiecte ca studii, nu galerii.'},
   work_lead:{en:'A portfolio spanning architecture, interiors, landscape and urban strategy — each project read as concept, research and lived experience.',ro:'Un portofoliu de arhitectură, interioare, landscape și strategie urbană — fiecare proiect citit ca un concept, o cercetare și o experiență trăită.'},
-  work_note:{en:'Placeholder cards — replace with real ECHO projects in the admin. No stock imagery is used here by design.',ro:'Carduri demonstrative — se înlocuiesc cu proiecte ECHO reale din admin. Intenționat, nu folosim imagini stock.'},
+  work_note:{en:'Descriptions for some projects are still being completed.',ro:'Descrierile unor proiecte sunt încă în completare.'},
   map_eyebrow:{en:'Project map',ro:'Harta proiectelor'},
   map_title:{en:'Where our work resonates.',ro:'Unde se propagă lucrările noastre.'},
   map_lead:{en:'A geographic reading of ECHO projects — from private interiors and houses to public space, research and metropolitan strategies.',ro:'O citire geografică a proiectelor ECHO — de la interioare și locuințe private la spații publice, cercetare și strategii metropolitane.'},
@@ -1285,7 +1296,7 @@ function openProject(slug, keepScroll){
   if(!keepScroll) view.scrollTop=0;
   requestAnimationFrame(()=>{ drawArt($('#pvHero'), p.seed, {box:$('.pview__hero')});
     $$('.pview__gallery canvas').forEach(cv=>drawArt(cv, +cv.dataset.seed, {box:cv.parentElement})); });
-  const back=()=>{ if(history.length>1){ history.back(); } else { location.hash='#work'; } };
+  const back=()=>{ location.hash='#work'; };
   $('#pvBack').addEventListener('click',back); $('#pvBack2').addEventListener('click',back);
 }
 function closeProject(){ const v=$('#projectView'); if(v && !v.hidden){ v.hidden=true; v.setAttribute('aria-hidden','true'); v.dataset.slug=''; if($('#admin').hidden) document.body.style.overflow=''; } }
