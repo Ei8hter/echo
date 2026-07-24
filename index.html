@@ -644,7 +644,7 @@ form{display:grid; gap:18px}
         <span class="eyebrow" data-i="contact_eyebrow">Start a project</span>
         <p class="contact__big" data-i="contact_big">Tell us about your project.</p>
         <div class="contact__info">
-          <a href="mailto:hello@echoo.eu"><small data-i="c_email">Email</small><b>hello@echoo.eu</b></a>
+          <a href="mailto:office@echoo.eu"><small data-i="c_email">Email</small><b>office@echoo.eu</b></a>
           <a href="tel:+40"><small data-i="c_phone">Phone</small><b>+40 ··· ··· ···</b></a>
           <p><small data-i="c_loc">Location</small><b>Iași, România</b></p>
           <div class="social" aria-label="Social">
@@ -825,7 +825,7 @@ const DEFAULTS = {
     heroSub:{en:'Architecture, interiors, landscape and urban strategy for spaces that think, adapt and resonate — from private homes to metropolitan futures.',ro:'Arhitectură, design interior, landscape și strategie urbană pentru spații care gândesc, se adaptează și rămân relevante — de la locuințe la viitorul metropolitan.'},
     intro:{en:'We design spaces that respond — to people, to context, to climate, to the future. <span class="dim">Every project begins by listening: to the client, to the site, to the city, and to the invisible patterns that shape how people live.</span>',ro:'Proiectăm spații care răspund — oamenilor, contextului, climei și viitorului. <span class="dim">Fiecare proiect începe cu ascultare: a clientului, a locului, a orașului și a modurilor subtile în care oamenii folosesc spațiul.</span>'},
   },
-  contact:{ email:'hello@echoo.eu', phone:'+40 ··· ··· ···', location:'Iași, România',
+  contact:{ email:'office@echoo.eu', phone:'+40 720 669 687', location:'Vasile Lupu 78A, Iași, România',
             instagram:'https://www.instagram.com/building.echo/', facebook:'https://www.facebook.com/building.echo/' },
   legal:{ privacy:'Privacy Policy — placeholder. Requires final legal review.', cookies:'Cookie Policy — placeholder. Requires final legal review.', terms:'Terms & Conditions — placeholder. Requires final legal review.' },
   services:[
@@ -864,30 +864,81 @@ const DEFAULTS = {
     {a:{en:'Metropolitan mobility',ro:'Mobilitate metropolitană'},b:{en:'Systems',ro:'Sisteme'}},
   ],
   projects:[
-    {id:'p1',slug:'metropolitan-masterplan-iasi',seed:11,cat:'Urban Strategy',status:'Strategic',year:'2025',area:'—',lat:47.162,lng:27.585,onHome:true,onMap:true,state:'published',
-     t:{en:'Metropolitan Masterplan',ro:'Masterplan Metropolitan'},loc:{en:'Iași Metropolitan Area',ro:'Zona Metropolitană Iași'},feature:true,
-     excerpt:{en:'A long-horizon spatial strategy for the Iași metropolitan area — mobility, green-blue corridors and growth read as one system.',ro:'O strategie spațială pe termen lung pentru zona metropolitană Iași — mobilitate, coridoare verzi-albastre și creștere citite ca un singur sistem.'},
-     concept:{en:'The plan treats the metropolis as a living network rather than a map of plots. Layers of mobility, ecology and density are tested against one another so that decisions at the scale of a street still make sense at the scale of the region.',ro:'Planul tratează metropola ca o rețea vie, nu ca o hartă de parcele. Straturi de mobilitate, ecologie și densitate sunt testate unele față de altele, astfel încât deciziile la scara unei străzi să aibă sens și la scara regiunii.'}},
-    {id:'p2',slug:'courtyard-house',seed:22,cat:'Architecture',status:'Concept',year:'2024',area:'240 m²',lat:47.145,lng:27.640,onHome:true,onMap:true,state:'published',
-     t:{en:'Courtyard House',ro:'Casa cu curte'},loc:{en:'Residential · Iași',ro:'Rezidențial · Iași'},
-     excerpt:{en:'A private home organised around a quiet inner courtyard that brings light and calm into every room.',ro:'O locuință privată organizată în jurul unei curți interioare liniștite, care aduce lumină și calm în fiecare cameră.'},
-     concept:{en:'The house turns inward to find privacy on a tight urban plot. A single courtyard becomes the heart of the plan, and every room borrows light, view and air from it.',ro:'Casa se întoarce spre interior pentru a găsi intimitate pe o parcelă urbană strânsă. O singură curte devine inima planului, iar fiecare cameră împrumută lumină, priveliște și aer din ea.'}},
-    {id:'p3',slug:'gallery-interior',seed:33,cat:'Interior Design',status:'Completed',year:'2024',area:'180 m²',lat:47.170,lng:27.575,onHome:true,onMap:true,state:'published',
-     t:{en:'Gallery Interior',ro:'Interior galerie'},loc:{en:'Cultural · Iași',ro:'Cultural · Iași'},
-     excerpt:{en:'A neutral, precise interior that lets the work on the walls do the talking.',ro:'Un interior neutru și precis, care lasă lucrările de pe pereți să vorbească.'},
-     concept:{en:'Surfaces, light and circulation are tuned to disappear. The interior is a quiet instrument: warm enough to welcome, neutral enough to let art and people take the lead.',ro:'Suprafețele, lumina și circulația sunt acordate să dispară. Interiorul e un instrument discret: cald cât să primească, neutru cât să lase arta și oamenii în prim-plan.'}},
-    {id:'p4',slug:'green-blue-corridor',seed:44,cat:'Landscape',status:'Research',year:'2025',area:'3.2 ha',lat:47.130,lng:27.600,onHome:true,onMap:true,state:'published',
-     t:{en:'Green-Blue Corridor',ro:'Coridor verde-albastru'},loc:{en:'Public space · Iași',ro:'Spațiu public · Iași'},feature:true,
-     excerpt:{en:'A continuous green-blue corridor that links water, planting and people across the city fabric.',ro:'Un coridor verde-albastru continuu care leagă apa, vegetația și oamenii prin țesutul orașului.'},
-     concept:{en:'Water is treated as public infrastructure. The corridor stitches fragmented edges into one continuous landscape that cools the city, slows rainwater and gives people a place to walk.',ro:'Apa este tratată ca infrastructură publică. Coridorul coase marginile fragmentate într-un peisaj continuu care răcorește orașul, încetinește apa de ploaie și oferă oamenilor un loc de plimbare.'}},
-    {id:'p5',slug:'adaptive-reuse',seed:55,cat:'Architecture',status:'On Site',year:'2023',area:'520 m²',lat:47.155,lng:27.560,onHome:false,onMap:true,state:'published',
-     t:{en:'Adaptive Reuse',ro:'Conversie adaptivă'},loc:{en:'Conversion · Iași',ro:'Conversie · Iași'},
-     excerpt:{en:'An existing structure given a second life — kept, repaired and quietly reprogrammed.',ro:'O structură existentă primește o a doua viață — păstrată, reparată și reprogramată discret.'},
-     concept:{en:'Rather than demolish, we keep. The existing frame sets the rules; new interventions are legible, reversible and light, so the building can change again in the future.',ro:'În loc să demolăm, păstrăm. Structura existentă stabilește regulile; intervențiile noi sunt lizibile, reversibile și ușoare, ca clădirea să se poată schimba din nou în viitor.'}},
-    {id:'p6',slug:'civic-hall',seed:66,cat:'Public Space',status:'Concept',year:'2024',area:'1 100 m²',lat:47.185,lng:27.620,onHome:false,onMap:true,state:'draft',
-     t:{en:'Civic Hall',ro:'Hală civică'},loc:{en:'Competition · Iași',ro:'Concurs · Iași'},
-     excerpt:{en:'A flexible civic room for the city — a competition proposal for shared public life.',ro:'O sală civică flexibilă pentru oraș — o propunere de concurs pentru viața publică împărtășită.'},
-     concept:{en:'One generous room, many uses. The hall is designed to be claimed by the city — market, meeting, performance — with a structure that frames the public realm rather than competing with it.',ro:'O singură sală generoasă, multe utilizări. Hala e gândită să fie revendicată de oraș — piață, întâlnire, spectacol — cu o structură care încadrează spațiul public, nu concurează cu el.'}},
+    {id:'p1',slug:'centru-psihiatrie-galati',seed:11,cat:'Architecture',status:'Concept',year:'2025',area:'599,6 mp',lat:45.752,lng:27.548,onHome:true,onMap:true,state:'published',feature:true,
+     cover:'https://echoo.eu/wp-content/uploads/2026/04/ABDScene-11.png',
+     gallery:['https://echoo.eu/wp-content/uploads/2026/04/ABDScene-14.png','https://echoo.eu/wp-content/uploads/2026/04/ABDScene-8_1-scaled.jpg','https://echoo.eu/wp-content/uploads/2026/04/ABDScene-10.png','https://echoo.eu/wp-content/uploads/2026/04/ABDScene-15.png','https://echoo.eu/wp-content/uploads/2026/04/ABDScene-13.png','https://echoo.eu/wp-content/uploads/2026/04/ABDScene-12.png'],
+     t:{en:'Private Psychiatry Centre',ro:'Centru Privat de Psihiatrie'},loc:{en:'Valea Mărului, Galați',ro:'Valea Mărului, județul Galați'},
+     excerpt:{en:'A private centre for mental health care, treatment and recovery — architecture that steps away from the rigid institutional image toward something calm, domestic and protective.',ro:'Un centru privat dedicat tratamentului, recuperării și îngrijirii sănătății mintale — o arhitectură care se îndepărtează de imaginea instituțională rigidă, propunând un mediu calm, domestic și protectiv.'},
+     concept:{en:'Organised on a single level around an L-shaped plan, the building separates flows clearly: reception and administration, consulting rooms, patient areas, shared spaces and a room for group therapy. A sheltered portico and generous glazing give orientation and transparency, while the inner courtyard becomes an extension of the therapeutic programme. The expression is sober and warm — a brown-red metal roof, white façades, exposed brick plinth — familiar in the rural landscape but read in a contemporary key. Performance is built in: high-grade insulation, triple glazing, heat-recovery ventilation, heat pump and photovoltaics.',ro:'Clădirea este organizată pe un singur nivel, cu un plan în formă de „L”, soluție care separă clar fluxurile: acces și administrativ, cabinete medicale, spații pentru pacienți, zone comune și sală dedicată psihoterapiei de grup. Un portic protejat și o zonă vitrată amplă oferă orientare și transparență, iar curtea interioară devine o extensie a funcțiunii terapeutice. Expresia e sobră și caldă — acoperiș metalic brun-roșcat, fațade albe, soclu din cărămidă aparentă — familiară în peisajul rural, dar reinterpretată contemporan. Tehnic: termoizolație performantă, geam triplu, ventilare cu recuperare de căldură, pompă de căldură și panouri fotovoltaice.'}},
+
+    {id:'p2',slug:'spa-privat-botosani',seed:12,cat:'Architecture',status:'Completed',year:'2025',area:'352,8 mp',lat:47.706,lng:26.686,onHome:true,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2026/03/spa_botosani-120-of-121.webp',
+     gallery:['https://echoo.eu/wp-content/uploads/2026/03/spa_botosani-92-of-121.webp','https://echoo.eu/wp-content/uploads/2026/03/spa_botosani-12-of-121.webp','https://echoo.eu/wp-content/uploads/2026/03/spa_botosani-101-of-121.webp','https://echoo.eu/wp-content/uploads/2026/03/spa_botosani-15-of-121.webp','https://echoo.eu/wp-content/uploads/2026/03/spa_botosani-94-of-121.webp','https://echoo.eu/wp-content/uploads/2026/03/spa_botosani-108-of-121.webp'],
+     t:{en:'Private SPA',ro:'SPA Privat'},loc:{en:'Curtești, Botoșani',ro:'Curtești, Botoșani'},
+     excerpt:{en:'A wellness pavilion on 1.8 hectares, rotated 45° to capture zenithal light — an autonomous structure redefining the limits between inside and the Moldavian plain.',ro:'Un pavilion de wellness pe un teren de peste 1,8 hectare, rotit la 45° pentru a capta lumina zenitală — o structură autonomă care redefinește limitele dintre interior și orizontul câmpiei moldave.'},
+     concept:{en:'The interior programme unfolds as a sequence of thermal experiences — wet sauna, dry sauna and cryosauna — arranged radially around a central relaxation area. A large-span aluminium façade keeps a constant visual dialogue with the garden, while exposed masonry walls give the building a timeless, robust presence. The main volume is covered by a roof structure that leaves the rhythm of the beams visible, turning the ceiling into a sculptural element of light and shadow. Sited in a grade IV wind zone, the building rests on foundations at −1.30 m with a reinforced concrete frame. Over 940 sqm of paths wind organically through the property.',ro:'Programul interior integrează o succesiune de experiențe termice — saună umedă, saună uscată și criosaună — dispuse radial în jurul unei zone centrale de relaxare. Fațada principală, o rețea de tâmplărie de aluminiu de mare anvergură, permite un dialog vizual constant cu grădina, în timp ce pereții din zidărie aparentă conferă clădirii o prezență atemporală. Volumul principal e acoperit de o șarpantă ce lasă la vedere ritmul grinzilor, transformând tavanul într-un element sculptural de lumină și umbră. Amplasată într-o zonă eoliană de grad IV, clădirea are fundații la −1,30 m și structură în cadre de beton armat. Peste 940 mp de alei șerpuiesc organic prin proprietate.'}},
+
+    {id:'p3',slug:'casa-bok',seed:13,cat:'Architecture',status:'Technical Design',year:'2026',area:'S+P+1E',lat:47.174,lng:27.592,onHome:true,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2026/03/Scene-16_1-scaled.jpg',
+     gallery:['https://echoo.eu/wp-content/uploads/2026/03/Scene-14_1-scaled.jpg','https://echoo.eu/wp-content/uploads/2026/03/Scene-11_1-scaled.jpg','https://echoo.eu/wp-content/uploads/2026/03/Scene-13_1-scaled.jpg','https://echoo.eu/wp-content/uploads/2026/03/Scene-19-scaled.jpg','https://echoo.eu/wp-content/uploads/2026/03/Scene-12_1-scaled.jpg','https://echoo.eu/wp-content/uploads/2026/03/Scene-32-scaled.jpg'],
+     t:{en:'BOK House',ro:'Casa BOK'},loc:{en:'Sărărie, Iași',ro:'strada Sărărie, Iași'},
+     excerpt:{en:'A critical intervention on a hybrid structure on the historic Sărărie slope — turning fragmentation into a unified, monolithic volume.',ro:'O intervenție critică asupra unei structuri hibride pe versantul istoric al străzii Sărărie — transformarea fragmentării într-un volum unitar, monolitic.'},
+     concept:{en:'Not a simple renovation but a conceptual reconstruction. Existing foundations were underpinned to −1.50 m to secure the slope; load-bearing walls were reinforced with jacketing and cement grout injection, creating a rigid core able to carry the new S+P+1E configuration. Façade openings were reworked through reinforced concrete bordering arches, letting interior flows be reconfigured without compromising the whole. Performance follows a logic of invisible efficiency: a 200 mm basalt wool envelope, triple glazing, aluminium joinery and a 14 kW air-to-water heat pump. A 30 sqm pool and WPC terraces form a fluid transition to the landscape, with over half the plot kept green.',ro:'Nu o simplă renovare, ci o reconstrucție conceptuală. Fundațiile existente au fost subzidite până la −1,50 m pentru stabilitate pe versant; pereții portanți au fost consolidați prin cămășuieli armate și injectări cu lapte de ciment, creând un nucleu rigid capabil să susțină noua configurație S+P+1E. Modificările de fațadă s-au făcut prin arce de bordaj din beton armat, permițând reconfigurarea fluxurilor interioare fără a compromite integritatea ansamblului. Performanța urmează o logică a eficienței invizibile: înveliș de 200 mm vată bazaltică, geam tripan, tâmplărie de aluminiu și pompă de căldură aer-apă de 14 kW. O piscină de 30 mp și terase din WPC creează tranziția spre peisaj, peste 50% din teren rămânând spațiu verde.'}},
+
+    {id:'p4',slug:'lojja-residence',seed:14,cat:'Architecture',status:'Concept',year:'2024',area:'—',lat:47.192,lng:27.573,onHome:true,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2024/01/Exterioara_eyelvl_9c-scaled.jpg',
+     gallery:['https://echoo.eu/wp-content/uploads/2024/01/Exterioara_eyelvl_1_noppl-scaled.jpg','https://echoo.eu/wp-content/uploads/2024/01/Exterioara_eyelvl_4_noppl-scaled.jpg','https://echoo.eu/wp-content/uploads/2024/01/Exterioara_eyelvl_9_noppl_new-scaled.jpg','https://echoo.eu/wp-content/uploads/2024/01/Exterioara_eyelvl_9b_noppl-scaled.jpg'],
+     t:{en:'Lojja Residence',ro:'Lojja Residence'},loc:{en:'Copou, Iași',ro:'Copou, Iași'},
+     excerpt:{en:'A residence opening toward the Copou vineyards, wrapped in a dynamic structure of undulating terraces and balconies — what we like to call loggias.',ro:'O reședință care se deschide către viile din Copou, învăluită într-o structură dinamică de terase și balcoane ondulate — sau, cum ne place nouă să le numim, loje.'},
+     concept:{en:'Designed as a response to a singular urban and natural setting, with discreet access from Viticultori street. Every apartment has its loggia, with uninterrupted views over the surroundings. The exterior blends textures that echo the nearby vineyards: brick adds warmth, stone conveys resistance, timber brings a natural grace. Lighting played a decisive role — advanced simulations and strategically placed fixtures create a play of shadow that underlines the building contours, with HDRI enriching the interplay of natural and artificial light. Real drone photography let us overlay the 3D renders onto the actual terrain for a photorealistic preview of how the building settles into its topography.',ro:'Proiectată ca răspuns la contextul urban și natural unic în care se află, cu acces discret din strada Viticultori. Fiecare apartament dispune de loja proprie, cu priveliști neîntrerupte asupra mediului înconjurător. Exteriorul îmbină texturi care se potrivesc vizual cu viile din apropiere: cărămida adaugă căldură, piatra transmite rezistență, lemnul aduce o notă de grație naturală. Iluminatul a jucat un rol crucial — simulări avansate și corpuri plasate strategic creează un joc de umbre care subliniază contururile clădirii, iar HDRI îmbogățește dialogul dintre lumina naturală și cea artificială. Fotografiile reale capturate de dronă ne-au permis să suprapunem randările 3D pe terenul actual, oferind o previzualizare fotorealistă a integrării în topografie.'}},
+
+    {id:'p5',slug:'fabrica-siretul',seed:15,cat:'Architecture',status:'Concept',year:'2022',area:'—',lat:47.746,lng:26.669,onHome:true,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2022/07/VF_4-Photo.jpg',gallery:[],
+     t:{en:'Siretul Factory',ro:'Fabrica Siretul'},loc:{en:'Botoșani',ro:'Botoșani'},
+     excerpt:{en:'Adaptive reuse of an industrial complex — description to be completed.',ro:'Reconversia unui ansamblu industrial — descriere de completat.'},
+     concept:{en:'',ro:''}},
+
+    {id:'p6',slug:'castelul-grecilor',seed:16,cat:'Architecture',status:'Concept',year:'2023',area:'—',lat:47.158,lng:27.601,onHome:true,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2023/02/KIRA9-FIN9-scaled.jpg',gallery:[],
+     t:{en:'The Greeks\' Castle',ro:'Castelul Grecilor'},loc:{en:'Iași',ro:'Iași'},
+     excerpt:{en:'Heritage intervention — description to be completed.',ro:'Intervenție pe patrimoniu — descriere de completat.'},
+     concept:{en:'',ro:''}},
+
+    {id:'p7',slug:'casa-in-blaj',seed:17,cat:'Architecture',status:'Concept',year:'2023',area:'—',lat:46.176,lng:23.916,onHome:true,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2023/08/Thumb.jpg',gallery:[],
+     t:{en:'House in Blaj',ro:'Casă în Blaj'},loc:{en:'Blaj, Alba',ro:'Blaj, județul Alba'},
+     excerpt:{en:'Private house — description to be completed.',ro:'Locuință individuală — descriere de completat.'},
+     concept:{en:'',ro:''}},
+
+    {id:'p8',slug:'clinica-medicala',seed:18,cat:'Interior Design',status:'Completed',year:'2022',area:'—',lat:47.164,lng:27.578,onHome:true,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2022/07/01.Receptie.jpg',gallery:[],
+     t:{en:'Medical Clinic',ro:'Clinică medicală'},loc:{en:'Iași',ro:'Iași'},
+     excerpt:{en:'Interior design for a medical clinic — description to be completed.',ro:'Amenajare interioară pentru o clinică medicală — descriere de completat.'},
+     concept:{en:'',ro:''}},
+
+    {id:'p9',slug:'casa-grd',seed:19,cat:'Architecture',status:'Completed',year:'2020',area:'—',lat:47.151,lng:27.612,onHome:false,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2020/09/6.Exterior1_FIN1.jpg',gallery:[],
+     t:{en:'GRD House',ro:'Casa GRD'},loc:{en:'Iași',ro:'Iași'},
+     excerpt:{en:'Private house — description to be completed.',ro:'Locuință individuală — descriere de completat.'},
+     concept:{en:'',ro:''}},
+
+    {id:'p10',slug:'apartament-rvm',seed:20,cat:'Interior Design',status:'Completed',year:'2020',area:'—',lat:47.168,lng:27.576,onHome:false,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2020/09/001-1.png',gallery:[],
+     t:{en:'RVM Apartment',ro:'Apartament RVM'},loc:{en:'Iași',ro:'Iași'},
+     excerpt:{en:'Apartment renovation — description to be completed.',ro:'Renovare apartament — descriere de completat.'},
+     concept:{en:'',ro:''}},
+
+    {id:'p11',slug:'casa-tro',seed:21,cat:'Architecture',status:'Completed',year:'2020',area:'—',lat:47.145,lng:27.567,onHome:false,onMap:true,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2020/09/Exterior5.jpg',gallery:[],
+     t:{en:'TRO House',ro:'Casa TRO'},loc:{en:'Iași',ro:'Iași'},
+     excerpt:{en:'House with extension — description to be completed.',ro:'Casă cu extensie — descriere de completat.'},
+     concept:{en:'',ro:''}},
+
+    {id:'p12',slug:'redflags',seed:22,cat:'Research',status:'Completed',year:'2022',area:'—',lat:null,lng:null,onHome:false,onMap:false,state:'published',
+     cover:'https://echoo.eu/wp-content/uploads/2022/07/V1_page-0006.jpg',gallery:[],
+     t:{en:'Redflags',ro:'Redflags'},loc:{en:'Branding',ro:'Branding'},
+     excerpt:{en:'Branding project — description to be completed.',ro:'Proiect de branding — descriere de completat.'},
+     concept:{en:'',ro:''}},
   ],
 };
 
