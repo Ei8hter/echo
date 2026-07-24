@@ -281,6 +281,32 @@ section{position:relative}
 .member__cap b{font-family:var(--display); font-weight:600; font-size:17px; display:block}
 .member__cap span{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--sand); text-transform:uppercase}
 
+/* ============ CLIENTS ============ */
+.clients{background:var(--bg-2)}
+.clients__grid{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line);
+  border:1px solid var(--line); border-radius:6px; overflow:hidden}
+@media(min-width:620px){.clients__grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.clients__grid{grid-template-columns:repeat(4,1fr)}}
+.client{display:flex; align-items:center; justify-content:center; text-align:center;
+  min-height:132px; padding:26px 20px; background:var(--bg-2); position:relative;
+  transition:background .45s var(--ease); overflow:hidden}
+.client::before{content:""; position:absolute; inset:0;
+  background:radial-gradient(120% 120% at 50% 120%, rgba(221,204,174,.10), transparent 60%);
+  opacity:0; transition:opacity .5s var(--ease)}
+.client:hover{background:var(--bg-3)}
+.client:hover::before{opacity:1}
+.client__mark{font-family:var(--display); font-weight:600; font-size:clamp(15px,1.5vw,19px);
+  letter-spacing:-.01em; line-height:1.2; color:var(--text-dim); position:relative;
+  transition:color .45s var(--ease), transform .45s var(--ease)}
+.client:hover .client__mark{color:var(--sand); transform:translateY(-1px)}
+.client__logo{max-width:150px; max-height:46px; width:auto; height:auto; object-fit:contain;
+  filter:brightness(0) invert(1); opacity:.62;
+  transition:opacity .45s var(--ease), transform .45s var(--ease)}
+.client:hover .client__logo{opacity:1; transform:translateY(-1px)}
+.clients__note{font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--muted);
+  margin-top:22px; display:flex; align-items:center; gap:10px}
+.clients__note::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--sand); flex-shrink:0}
+
 /* ============ RESEARCH ============ */
 .research{background:var(--bg-2); position:relative; overflow:hidden}
 .research__grid{display:grid; grid-template-columns:1fr; gap:40px}
@@ -649,6 +675,20 @@ form{display:grid; gap:18px}
   </div>
 </section>
 
+<!-- ============ CLIENTS ============ -->
+<section class="clients sec" id="clients">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <div>
+        <span class="eyebrow" data-i="cli_eyebrow">Clients &amp; collaborators</span>
+        <h2 class="sec__title" data-i="cli_title">Trusted by people who build carefully.</h2>
+      </div>
+      <p class="sec__lead" data-i="cli_lead">A selection of the brands, institutions and studios we have worked with across architecture, interiors and public projects.</p>
+    </div>
+    <div class="clients__grid reveal" id="clientsGrid"></div>
+  </div>
+</section>
+
 <!-- ============ RESEARCH ============ -->
 <section class="research sec" id="research">
   <div class="wrap">
@@ -802,6 +842,9 @@ const T = {
   work_eyebrow:{en:'Selected work',ro:'Proiecte selectate'},
   work_title:{en:'Projects as studies, not galleries.',ro:'Proiecte ca studii, nu galerii.'},
   work_lead:{en:'A portfolio spanning architecture, interiors, landscape and urban strategy — each project read as concept, research and lived experience.',ro:'Un portofoliu de arhitectură, interioare, landscape și strategie urbană — fiecare proiect citit ca un concept, o cercetare și o experiență trăită.'},
+  cli_eyebrow:{en:'Clients & collaborators',ro:'Clienți & colaboratori'},
+  cli_title:{en:'Trusted by people who build carefully.',ro:'Alături de oameni care construiesc cu grijă.'},
+  cli_lead:{en:'A selection of the brands, institutions and studios we have worked with across architecture, interiors and public projects.',ro:'O selecție a brandurilor, instituțiilor și studiourilor cu care am lucrat în proiecte de arhitectură, interioare și spațiu public.'},
   work_note:{en:'Descriptions for some projects are still being completed.',ro:'Descrierile unor proiecte sunt încă în completare.'},
   map_eyebrow:{en:'Project map',ro:'Harta proiectelor'},
   map_title:{en:'Where our work resonates.',ro:'Unde se propagă lucrările noastre.'},
@@ -891,6 +934,15 @@ const DEFAULTS = {
     {a:{en:'GIS · mapping · analysis',ro:'GIS · mapping · analiză'},b:{en:'Method',ro:'Metodă'}},
     {a:{en:'Nature-based solutions',ro:'Soluții nature-based'},b:{en:'Climate',ro:'Climă'}},
     {a:{en:'Metropolitan mobility',ro:'Mobilitate metropolitană'},b:{en:'Systems',ro:'Sisteme'}},
+  ],
+  clients:[
+    {n:'Irina Schrotter', url:'https://irinaschrotter.com/', logo:''},
+    {n:'IQOS', url:'https://www.iqos.ro/', logo:''},
+    {n:'Montessori School of Iași', url:'https://montessori-iasi.ro/', logo:''},
+    {n:'Carbon Ristorante', url:'https://carbon.ro/', logo:''},
+    {n:'Ciambella', url:'https://la-ciambella.ro/', logo:''},
+    {n:'SHARE Architects', url:'https://share-architects.com/', logo:'https://share-architects.com/wp-content/uploads/2025/07/share-architects.com-logo-general-white.svg'},
+    {n:'BOK Group', url:'https://bokgroup.co.uk/', logo:''},
   ],
   projects:[
     {id:'p1',slug:'centru-psihiatrie-galati',seed:11,cat:'Architecture',status:'Concept',year:'2025',area:'599,6 mp',lat:45.752,lng:27.548,onHome:true,onMap:true,state:'published',feature:true,
@@ -1167,7 +1219,25 @@ function renderHeroFeature(){
     fe.style.display = '';
   }
 }
-function renderAll(){ renderWork(); renderServices(); renderProcess(); renderScales(); renderTeam(); renderResearch(); renderSelects(); renderMap(); applyDynamic(); renderHeroFeature(); }
+function renderClients(){
+  const g=document.getElementById('clientsGrid'); if(!g) return; g.innerHTML='';
+  (STATE.clients||[]).forEach(c=>{
+    const a=document.createElement('a');
+    a.className='client'; a.href=c.url||'#'; a.target='_blank'; a.rel='noopener noreferrer';
+    a.setAttribute('aria-label', c.n);
+    if(c.logo){
+      const img=document.createElement('img');
+      img.className='client__logo'; img.src=c.logo; img.alt=c.n; img.loading='lazy';
+      // if the logo fails to load, fall back to the wordmark
+      img.onerror=()=>{ a.innerHTML='<span class="client__mark">'+c.n+'</span>'; };
+      a.appendChild(img);
+    } else {
+      a.innerHTML='<span class="client__mark">'+c.n+'</span>';
+    }
+    g.appendChild(a);
+  });
+}
+function renderAll(){ renderWork(); renderServices(); renderProcess(); renderScales(); renderTeam(); renderResearch(); renderSelects(); renderMap(); applyDynamic(); renderHeroFeature(); renderClients(); }
 
 /* ---------------- LANG ---------------- */
 function applyLang(l){
