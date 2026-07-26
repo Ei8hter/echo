@@ -423,6 +423,33 @@ form{display:grid; gap:18px}
 .map__legend span i{width:7px; height:7px; border-radius:50%; background:var(--sand); display:inline-block}
 .map__legend span.alt i{background:#fff}
 .map__compass{position:absolute; right:16px; top:16px; z-index:4; font-size:10.5px; letter-spacing:.14em; color:var(--muted)}
+
+/* ---- Leaflet real map ---- */
+#leafletMap{position:absolute; inset:0; z-index:1; background:#0E0D0B}
+.leaflet-container{background:#0E0D0B; font-family:var(--body)}
+.map__legend, .map__compass{z-index:1200; pointer-events:none}
+.map__legend{background:rgba(14,13,11,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); padding:8px 12px; border-radius:8px; border:1px solid var(--line)}
+.map__compass{background:rgba(14,13,11,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); padding:6px 10px; border-radius:100px; border:1px solid var(--line)}
+.echo-pin{position:relative}
+.echo-pin .ep-dot{position:absolute; left:50%; top:50%; width:12px; height:12px; margin:-6px 0 0 -6px; border-radius:50%; background:var(--sand); box-shadow:0 0 0 3px rgba(14,13,11,.9), 0 2px 8px rgba(0,0,0,.5)}
+.echo-pin .ep-ring{position:absolute; left:50%; top:50%; width:12px; height:12px; margin:-6px 0 0 -6px; border-radius:50%; border:1.5px solid var(--sand); animation:ping 2.6s var(--ease) infinite}
+@media (prefers-reduced-motion:reduce){ .echo-pin .ep-ring{animation:none; opacity:.4} }
+.leaflet-popup-content-wrapper{background:var(--bg-2); color:var(--text); border:1px solid var(--line-2); border-radius:8px; box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.leaflet-popup-content{margin:16px 18px}
+.leaflet-popup-tip{background:var(--bg-2); border:1px solid var(--line-2)}
+.leaflet-popup-close-button{color:var(--muted)!important}
+.leaflet-container a.leaflet-popup-close-button:hover{color:var(--sand)!important}
+.lpop .pc-cat{font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--sand); margin-bottom:6px}
+.lpop h4{font-family:var(--display); font-size:19px; font-weight:600; margin:0 0 6px}
+.lpop .pc-meta{font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:8px}
+.lpop p{font-size:13.5px; color:var(--text-dim); margin:0 0 12px; max-width:34ch}
+.lpop a{font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--sand); text-decoration:none}
+.lpop a:hover{text-decoration:underline}
+.leaflet-bar a{background:var(--bg-2); color:var(--text); border-color:var(--line)}
+.leaflet-bar a:hover{background:var(--bg-3)}
+.leaflet-control-attribution{background:rgba(14,13,11,.7)!important; color:var(--muted)!important}
+.leaflet-control-attribution a{color:var(--sand)!important}
+
 @media(max-width:760px){.map__legend{display:none}}
 
 /* ============ PROJECT DETAIL OVERLAY ============ */
@@ -507,6 +534,9 @@ form{display:grid; gap:18px}
 .login__card form{margin-top:20px}
 .adminMsg{font-family:var(--mono); font-size:12px; color:var(--sand); min-height:1em; margin-top:8px}
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>window.LF=window.L;</script>
 </head>
 <body>
 
@@ -614,11 +644,9 @@ form{display:grid; gap:18px}
   </div>
   <div class="map__stage reveal">
     <div class="map__canvas" id="mapStage">
-      <svg class="map__bg" id="mapSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
-      <div class="map__pins" id="mapPins"></div>
-      <div class="map__pop" id="mapPop" hidden></div>
+      <div id="leafletMap"></div>
       <div class="map__legend" id="mapLegend"></div>
-      <div class="map__compass mono">47.16°N · 27.59°E — IAȘI</div>
+      <div class="map__compass mono">ROMÂNIA · EUROPE</div>
     </div>
   </div>
 </section>
@@ -932,7 +960,7 @@ const DEFAULTS = {
   team:[
     {img:'andrei_bodnar',n:'Andrei Bodnar',r:{en:'Co-founder',ro:'Co-fondator'}},
     {img:'andrei_bujorean',n:'Andrei Bujorean',r:{en:'Co-founder · Senior Architect',ro:'Co-fondator · Arhitect Senior'}},
-    {img:'lia_misteanu',n:'Lia-Ioana Mișteanu',r:{en:'Senior Architect',ro:'Arhitect Senior'}},
+    {img:'lia_misteanu',n:'Lia-Ioana Misteanu',r:{en:'Senior Architect',ro:'Arhitect Senior'}},
     {img:'raluca_chirita',n:'Raluca Chiriță',r:{en:'Architect',ro:'Arhitect'}},
   ],
   research:[
@@ -1211,18 +1239,21 @@ function applyDynamic(){
 function renderHeroFeature(){
   const bg=document.getElementById('heroBg'), fe=document.getElementById('heroFeat');
   if(!bg) return;
-  const pool = STATE.projects.filter(p=>p.state==='published' && p.cover);
-  if(!pool.length){ bg.classList.remove('on'); if(fe) fe.style.display='none'; return; }
-  const p = pool.find(x=>x.feature) || pool[0];
-  const img = new Image();
-  img.onload = ()=>{ bg.style.backgroundImage = `url('${p.cover}')`; bg.classList.add('on'); };
-  img.onerror = ()=>{ bg.classList.remove('on'); };
-  img.src = p.cover;
+  if(!STATE.home.hero) STATE.home.hero={mode:'auto',project:'',url:''};
+  const H=STATE.home.hero;
+  const pub=STATE.projects.filter(p=>p.state==='published');
+  let url='', p=null;
+  if(H.mode==='url' && H.url){ url=H.url; }
+  else if(H.mode==='project' && H.project){ p=pub.find(x=>x.slug===H.project); url=p&&p.cover; }
+  if(!url){ p = pub.find(x=>x.feature && x.cover) || pub.find(x=>x.cover); url = p && p.cover; }
+  if(!url){ bg.classList.remove('on'); if(fe) fe.style.display='none'; return; }
+  const img=new Image();
+  img.onload=()=>{ bg.style.backgroundImage=`url('${url}')`; bg.classList.add('on'); };
+  img.onerror=()=>{ bg.classList.remove('on'); };
+  img.src=url;
   if(fe){
-    fe.href = '#p/'+p.slug;
-    fe.querySelector('.hf-k').textContent = (lang==='ro'?'Proiect':'Featured');
-    fe.querySelector('.hf-t').textContent = L(p.t);
-    fe.style.display = '';
+    if(p){ fe.href='#p/'+p.slug; fe.querySelector('.hf-k').textContent=(lang==='ro'?'Proiect':'Featured'); fe.querySelector('.hf-t').textContent=L(p.t); fe.style.display=''; }
+    else { fe.style.display='none'; }
   }
 }
 function renderClients(){
@@ -1291,27 +1322,40 @@ function buildMapSvg(){
   g+='</g>';
   return g;
 }
+let LMAP=null, LMARKERS=null, LRO=null;
+function initLeaflet(){
+  if(LMAP) return true;
+  const el=document.getElementById('leafletMap'); if(!el) return false;
+  if(typeof LF==='undefined' || !LF){ el.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--mono);font-size:12px;text-align:center;padding:20px">Map could not load — check your connection.</div>'; return false; }
+  LMAP=LF.map(el,{scrollWheelZoom:false, zoomControl:true, attributionControl:true}).setView([45.9,25.0],6);
+  LF.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19, subdomains:'abcd', attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(LMAP);
+  LMARKERS=LF.layerGroup().addTo(LMAP);
+  setTimeout(()=>{ try{ LMAP.invalidateSize(); }catch(e){} }, 350);
+  window.addEventListener('resize', ()=>{ try{ LMAP.invalidateSize(); }catch(e){} });
+  if('ResizeObserver' in window){ LRO=new ResizeObserver(()=>{ try{ LMAP.invalidateSize(); }catch(e){} }); LRO.observe(el); }
+  return true;
+}
 function renderMap(){
-  const svg=$('#mapSvg'), pins=$('#mapPins'), legend=$('#mapLegend'), pop=$('#mapPop');
-  if(!svg||!pins) return;
-  svg.setAttribute('preserveAspectRatio','none');
-  svg.innerHTML=buildMapSvg();
-  pins.innerHTML=''; if(pop){ pop.hidden=true; pop.innerHTML=''; }
+  const ready=initLeaflet();
   const items=pubProjects().filter(p=>p.onMap && p.lat && p.lng);
-  items.forEach(p=>{
-    const b=document.createElement('button'); b.className='pin'; b.type='button';
-    b.dataset.cat=p.cat; b.dataset.slug=p.slug;
-    b.style.left=projX(p.lng)+'%'; b.style.top=projY(p.lat)+'%';
-    b.setAttribute('aria-label', L(p.t));
-    b.addEventListener('click',e=>{ e.stopPropagation(); openPop(p,b); });
-    pins.appendChild(b);
-  });
-  // legend
+  // legend (works regardless of Leaflet)
+  const legend=document.getElementById('mapLegend');
   if(legend){ const cats=[...new Set(items.map(p=>p.cat))];
     legend.innerHTML=cats.map(c=>`<span class="${ALT_CATS.includes(c)?'alt':''}"><i></i>${c}</span>`).join(''); }
-  // close pop on stage click
-  const stage=$('#mapStage');
-  if(stage && !stage._bound){ stage._bound=true; stage.addEventListener('click',()=>{ if(pop){pop.hidden=true;} $$('.pin.active').forEach(x=>x.classList.remove('active')); }); }
+  if(!ready || !LMARKERS) return;
+  LMARKERS.clearLayers();
+  const bounds=[];
+  items.forEach(p=>{
+    const icon=LF.divIcon({className:'echo-pin', html:'<span class="ep-dot"></span><span class="ep-ring"></span>', iconSize:[18,18], iconAnchor:[9,9], popupAnchor:[0,-10]});
+    const mk=LF.marker([p.lat,p.lng],{icon, title:L(p.t)}).addTo(LMARKERS);
+    const html=`<div class="lpop"><div class="pc-cat">${p.cat}</div><h4>${L(p.t)}</h4>`+
+      `<div class="pc-meta">${L(p.loc)} · ${p.year} · ${p.status}</div>`+
+      `<p>${L(p.excerpt)}</p><a href="#p/${p.slug}">${T.pin_view[lang]} &rarr;</a></div>`;
+    mk.bindPopup(html,{closeButton:true, maxWidth:280});
+    bounds.push([p.lat,p.lng]);
+  });
+  if(bounds.length){ try{ LMAP.fitBounds(bounds,{padding:[50,50], maxZoom:11}); }catch(e){} }
+  setTimeout(()=>{ try{ LMAP.invalidateSize(); }catch(e){} }, 120);
 }
 function openPop(p, pinEl){
   const pop=$('#mapPop'); if(!pop) return;
@@ -1403,7 +1447,7 @@ function renderAdmin(){
       <div class="admin__side" id="adSide"></div>
       <div class="admin__content" id="adContent"></div>
     </div>`;
-  const tabs=[['projects','Projects'],['home','Homepage'],['services','Services'],['process','Process'],['contact','Contact & social'],['legal','Legal']];
+  const tabs=[['projects','Projects'],['home','Homepage'],['team','Team'],['clients','Clients'],['services','Services'],['process','Process'],['contact','Contact & social'],['legal','Legal']];
   $('#adSide').innerHTML=tabs.map(([k,l])=>`<button data-tab="${k}" class="${k===adminTab?'on':''}">${l}</button>`).join('');
   $$('#adSide button').forEach(b=>b.addEventListener('click',()=>{ adminTab=b.dataset.tab; editingId=null; renderAdmin(); }));
   $('#adView').addEventListener('click',()=>{ location.hash='#top'; });
@@ -1413,6 +1457,8 @@ function renderAdmin(){
   else if(adminTab==='home') adminHome(c);
   else if(adminTab==='services') adminServices(c);
   else if(adminTab==='process') adminProcess(c);
+  else if(adminTab==='team') adminTeam(c);
+  else if(adminTab==='clients') adminClients(c);
   else if(adminTab==='contact') adminContact(c);
   else if(adminTab==='legal') adminLegal(c);
 }
@@ -1503,19 +1549,41 @@ function adminProjectForm(c, id){
   $('#pForm').addEventListener('submit',e=>{ e.preventDefault(); if(!$('#t_en').value.trim()){ $('#pMsg').textContent='Title (EN) is required.'; return; } collect('published'); editingId=null; commit('Published.'); });
 }
 function adminHome(c){
-  const h=STATE.home;
+  const hm=STATE.home;
+  if(!hm.hero) hm.hero={mode:'auto',project:'',url:''};
+  const H=hm.hero;
+  const withCover=STATE.projects.filter(p=>p.cover);
+  const opts=withCover.map(p=>`<option value="${esc(p.slug)}" ${H.project===p.slug?'selected':''}>${esc(L(p.t))}</option>`).join('');
   c.innerHTML=`<h2>Homepage</h2><p class="hint">Edit the main statements. <code>&lt;em&gt;</code> highlights a word in gold; <code>&lt;span class="dim"&gt;</code> dims text.</p>
    <form id="hForm">
-    <label>Hero title (EN)<textarea id="ht_en">${esc(h.heroTitle.en)}</textarea></label>
-    <label>Hero title (RO)<textarea id="ht_ro">${esc(h.heroTitle.ro)}</textarea></label>
-    <label>Hero subtitle (EN)<textarea id="hs_en">${esc(h.heroSub.en)}</textarea></label>
-    <label>Hero subtitle (RO)<textarea id="hs_ro">${esc(h.heroSub.ro)}</textarea></label>
-    <label>Intro (EN)<textarea id="hi_en">${esc(h.intro.en)}</textarea></label>
-    <label>Intro (RO)<textarea id="hi_ro">${esc(h.intro.ro)}</textarea></label>
+    <div style="border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:18px">
+      <b style="display:block;margin-bottom:4px">Hero background image</b>
+      <p class="hint" style="margin-top:0">The large image behind the homepage intro.</p>
+      <label>Source
+        <select id="heroMode">
+          <option value="auto" ${H.mode==='auto'?'selected':''}>Automatic — featured / latest project</option>
+          <option value="project" ${H.mode==='project'?'selected':''}>Choose a project</option>
+          <option value="url" ${H.mode==='url'?'selected':''}>Custom image URL</option>
+        </select>
+      </label>
+      <label id="heroProjectWrap" style="${H.mode==='project'?'':'display:none'}">Project<select id="heroProject">${opts}</select></label>
+      <label id="heroUrlWrap" style="${H.mode==='url'?'':'display:none'}">Image URL<input id="heroUrl" value="${esc(H.url||'')}" placeholder="https://…"></label>
+    </div>
+    <label>Hero title (EN)<textarea id="ht_en">${esc(hm.heroTitle.en)}</textarea></label>
+    <label>Hero title (RO)<textarea id="ht_ro">${esc(hm.heroTitle.ro)}</textarea></label>
+    <label>Hero subtitle (EN)<textarea id="hs_en">${esc(hm.heroSub.en)}</textarea></label>
+    <label>Hero subtitle (RO)<textarea id="hs_ro">${esc(hm.heroSub.ro)}</textarea></label>
+    <label>Intro (EN)<textarea id="hi_en">${esc(hm.intro.en)}</textarea></label>
+    <label>Intro (RO)<textarea id="hi_ro">${esc(hm.intro.ro)}</textarea></label>
     <button class="abtn abtn--pri" type="submit">Save & publish</button><p class="adminMsg" id="hMsg"></p>
    </form>`;
+  const modeSel=$('#heroMode');
+  modeSel.addEventListener('change',()=>{ const v=modeSel.value;
+    $('#heroProjectWrap').style.display = v==='project'?'':'none';
+    $('#heroUrlWrap').style.display = v==='url'?'':'none'; });
   $('#hForm').addEventListener('submit',e=>{ e.preventDefault();
-    h.heroTitle={en:$('#ht_en').value,ro:$('#ht_ro').value}; h.heroSub={en:$('#hs_en').value,ro:$('#hs_ro').value}; h.intro={en:$('#hi_en').value,ro:$('#hi_ro').value};
+    hm.hero={ mode:modeSel.value, project:($('#heroProject')?$('#heroProject').value:''), url:($('#heroUrl')?$('#heroUrl').value.trim():'') };
+    hm.heroTitle={en:$('#ht_en').value,ro:$('#ht_ro').value}; hm.heroSub={en:$('#hs_en').value,ro:$('#hs_ro').value}; hm.intro={en:$('#hi_en').value,ro:$('#hi_ro').value};
     commit('Homepage saved.'); });
 }
 function adminServices(c){
@@ -1532,6 +1600,39 @@ function adminServices(c){
     $$('[data-k]',f).forEach(inp=>{ const i=+inp.dataset.i, [a,b]=inp.dataset.k.split('.'); STATE.services[i][a][b]=inp.value; });
     commit('Services saved.'); });
 }
+function adminTeam(c){
+  c.innerHTML=`<h2>Team</h2><p class="hint">Edit each member's name and role. Photos stay as set.</p><form id="tmForm"></form>`;
+  const f=$('#tmForm');
+  STATE.team.forEach((m,i)=>{ const d=document.createElement('div'); d.style.cssText='border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:14px';
+    d.innerHTML=`<label>Name<input data-k="n" data-i="${i}" value="${esc(m.n)}"></label>
+      <div class="f2"><label>Role (EN)<input data-k="r.en" data-i="${i}" value="${esc(m.r.en)}"></label><label>Role (RO)<input data-k="r.ro" data-i="${i}" value="${esc(m.r.ro)}"></label></div>`;
+    f.appendChild(d); });
+  const btn=document.createElement('button'); btn.className='abtn abtn--pri'; btn.type='submit'; btn.textContent='Save & publish'; f.appendChild(btn);
+  const msg=document.createElement('p'); msg.className='adminMsg'; f.appendChild(msg);
+  f.addEventListener('submit',e=>{ e.preventDefault();
+    $$('[data-k]',f).forEach(inp=>{ const i=+inp.dataset.i, parts=inp.dataset.k.split('.');
+      if(parts.length===1){ STATE.team[i][parts[0]]=inp.value; } else { STATE.team[i][parts[0]][parts[1]]=inp.value; } });
+    commit('Team saved.'); });
+}
+
+function adminClients(c){
+  c.innerHTML=`<h2>Clients & collaborators</h2><p class="hint">Add, edit or remove clients. Leave the logo field empty to show the name as text. Logos are shown in white automatically.</p><form id="clForm"></form>`;
+  const f=$('#clForm');
+  (STATE.clients||[]).forEach((cl,i)=>{ const d=document.createElement('div'); d.style.cssText='border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:14px';
+    d.innerHTML=`<div class="f2"><label>Name<input data-k="n" data-i="${i}" value="${esc(cl.n)}"></label><label>Website URL<input data-k="url" data-i="${i}" value="${esc(cl.url||'')}"></label></div>
+      <label>Logo image URL (optional)<input data-k="logo" data-i="${i}" value="${esc(cl.logo||'')}"></label>
+      <button type="button" class="abtn abtn--danger" data-del="${i}" style="margin-top:10px">Remove</button>`;
+    f.appendChild(d); });
+  const add=document.createElement('button'); add.type='button'; add.className='abtn'; add.textContent='+ Add client'; add.style.marginRight='10px';
+  const btn=document.createElement('button'); btn.className='abtn abtn--pri'; btn.type='submit'; btn.textContent='Save & publish';
+  const row=document.createElement('div'); row.style.marginTop='6px'; row.appendChild(add); row.appendChild(btn); f.appendChild(row);
+  const msg=document.createElement('p'); msg.className='adminMsg'; f.appendChild(msg);
+  const collect=()=>{ $$('[data-k]',f).forEach(inp=>{ const i=+inp.dataset.i, k=inp.dataset.k; STATE.clients[i][k]=inp.value; }); };
+  add.addEventListener('click',()=>{ collect(); if(!STATE.clients) STATE.clients=[]; STATE.clients.push({n:'New client',url:'',logo:''}); renderAdmin(); });
+  $$('[data-del]',f).forEach(b=>b.addEventListener('click',()=>{ collect(); STATE.clients.splice(+b.dataset.del,1); commit('Client removed.'); }));
+  f.addEventListener('submit',e=>{ e.preventDefault(); collect(); commit('Clients saved.'); });
+}
+
 function adminProcess(c){
   c.innerHTML=`<h2>Process</h2><p class="hint">Edit the eight architecture & design stages.</p><form id="prForm"></form>`;
   const f=$('#prForm');
