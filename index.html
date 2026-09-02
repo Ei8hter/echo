@@ -426,6 +426,7 @@ form{display:grid; gap:18px}
 
 /* ---- Leaflet real map ---- */
 #leafletMap{position:absolute; inset:0; z-index:1; background:#0E0D0B}
+.map--osmdark .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.35)}
 .leaflet-container{background:#0E0D0B; font-family:var(--body)}
 .map__legend, .map__compass{z-index:1200; pointer-events:none}
 .map__legend{background:rgba(14,13,11,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); padding:8px 12px; border-radius:8px; border:1px solid var(--line)}
@@ -1328,7 +1329,16 @@ function initLeaflet(){
   const el=document.getElementById('leafletMap'); if(!el) return false;
   if(typeof LF==='undefined' || !LF){ el.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--mono);font-size:12px;text-align:center;padding:20px">Map could not load — check your connection.</div>'; return false; }
   LMAP=LF.map(el,{scrollWheelZoom:false, zoomControl:true, attributionControl:true}).setView([45.9,25.0],6);
-  LF.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19, subdomains:'abcd', attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(LMAP);
+  // Primary: Esri dark canvas (no API key). Fallback: OSM tiles darkened with a CSS filter.
+  let tileErrors=0, switched=false;
+  const primary=LF.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxZoom:16, attribution:'&copy; Esri &mdash; Esri, DeLorme, NAVTEQ'});
+  primary.on('tileerror',()=>{ tileErrors++;
+    if(!switched && tileErrors>=4){ switched=true;
+      try{ LMAP.removeLayer(primary); }catch(e){}
+      el.classList.add('map--osmdark');
+      LF.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19, subdomains:'abc', attribution:'&copy; OpenStreetMap contributors'}).addTo(LMAP);
+    } });
+  primary.addTo(LMAP);
   LMARKERS=LF.layerGroup().addTo(LMAP);
   setTimeout(()=>{ try{ LMAP.invalidateSize(); }catch(e){} }, 350);
   window.addEventListener('resize', ()=>{ try{ LMAP.invalidateSize(); }catch(e){} });
