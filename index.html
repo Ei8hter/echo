@@ -774,6 +774,7 @@ form{display:grid; gap:18px}
           </div>
         </div>
         <div class="field"><label data-i="f_msg">Message</label><textarea name="message"></textarea></div>
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0">
         <label class="gdpr"><input type="checkbox" name="gdpr" required>
           <span data-i="f_gdpr">I agree to the processing of my personal data in line with the Privacy Policy. <a href="#">Read more</a></span>
         </label>
@@ -1761,10 +1762,66 @@ const io=('IntersectionObserver' in window) ? new IntersectionObserver((es)=>es.
 function observeReveal(){ if(io) $$('.reveal:not(.in)').forEach(n=>io.observe(n)); else $$('.reveal').forEach(n=>n.classList.add('in')); }
 observeReveal();
 
+const FORM_ENDPOINT = 'https://formspree.io/f/xdeozpze';
 const cf=$('#contactForm');
-if(cf) cf.addEventListener('submit',e=>{ e.preventDefault(); const f=e.target, msg=$('#formMsg'); const v=n=>f.querySelector('[name="'+n+'"]');
-  if(!v('name').value.trim()||!v('email').value.trim()||!v('gdpr').checked){ msg.style.color='#e0a890'; msg.textContent= lang==='ro'?'Completează numele, emailul și acordul GDPR.':'Please add your name, email and GDPR consent.'; return; }
-  msg.style.color='var(--sand)'; msg.textContent= lang==='ro'?'✓ Mulțumim — revenim în curând. (Demo: formularul nu trimite încă.)':'✓ Thank you — we’ll be in touch. (Demo: form not wired to a backend yet.)'; f.reset(); });
+if(cf) cf.addEventListener('submit', async e=>{
+  e.preventDefault();
+  const f=e.target, msg=$('#formMsg'), btn=f.querySelector('.form__submit');
+  const v=n=>f.querySelector('[name="'+n+'"]');
+  const RO = lang==='ro';
+
+  if(!v('name').value.trim() || !v('email').value.trim() || !v('gdpr').checked){
+    msg.style.color='#e0a890';
+    msg.textContent = RO ? 'Completează numele, emailul și acordul GDPR.' : 'Please add your name, email and GDPR consent.';
+    return;
+  }
+  // honeypot: bots fill hidden fields, humans don't
+  const hp=f.querySelector('[name="_gotcha"]');
+  if(hp && hp.value){ return; }
+
+  const labelOf=sel=>{ const el=v(sel); if(!el) return ''; const o=el.options&&el.options[el.selectedIndex]; return o?o.text:el.value; };
+  const data={
+    name: v('name').value.trim(),
+    email: v('email').value.trim(),
+    phone: v('phone') ? v('phone').value.trim() : '',
+    'tip proiect': labelOf('type'),
+    'locatie proiect': v('ploc') ? v('ploc').value.trim() : '',
+    'buget estimat': labelOf('budget'),
+    message: v('message') ? v('message').value.trim() : '',
+    _subject: 'Cerere nouă de pe echoo.eu — ' + v('name').value.trim()
+  };
+
+  const prev = btn ? btn.innerHTML : '';
+  if(btn){ btn.disabled=true; btn.style.opacity='.6'; btn.innerHTML='<span>'+(RO?'Se trimite…':'Sending…')+'</span>'; }
+  msg.style.color='var(--muted)'; msg.textContent = RO ? 'Se trimite…' : 'Sending…';
+
+  try{
+    const res = await fetch(FORM_ENDPOINT, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify(data)
+    });
+    if(res.ok){
+      msg.style.color='var(--sand)';
+      msg.textContent = RO ? '✓ Mulțumim — mesajul a fost trimis. Revenim în cel mai scurt timp.'
+                           : '✓ Thank you — your message was sent. We’ll be in touch shortly.';
+      f.reset();
+    } else {
+      let detail='';
+      try{ const j=await res.json(); if(j && j.errors && j.errors.length) detail=' ('+j.errors[0].message+')'; }catch(_){}
+      throw new Error('bad response'+detail);
+    }
+  }catch(err){
+    msg.style.color='#e0a890';
+    msg.innerHTML = (RO ? 'Nu am putut trimite mesajul. Scrie-ne direct la '
+                        : 'We could not send the message. Please email us at ')
+                  + '<a href="mailto:office@echoo.eu" style="color:var(--sand)">office@echoo.eu</a>'
+                  + (RO ? ' sau sună la ' : ' or call ')
+                  + '<a href="tel:+40720669687" style="color:var(--sand)">+40 720 669 687</a>.';
+  }finally{
+    if(btn){ btn.disabled=false; btn.style.opacity=''; btn.innerHTML=prev; }
+  }
+});
 
 const cookie=$('#cookie');
 if(cookie){ if(!store.get('echo_ck')) setTimeout(()=>cookie.classList.add('show'),1400);
