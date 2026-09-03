@@ -1086,7 +1086,7 @@ const pubProjects = ()=> STATE.projects.filter(p=>p.state==='published');
    Falls back silently to the built-in demo data on any error,
    so the site always works even before content is added.
    ========================================================= */
-const SANITY = { projectId:'1sodfyxp', dataset:'production', apiVersion:'2025-02-19' };
+const SANITY = { projectId:'lsodfyxp', dataset:'production', apiVersion:'2025-02-19' };
 const sImg = (url, params)=> url ? url + (url.includes('?')?'&':'?') + (params||'auto=format') : '';
 function seedFromSlug(s){ let h=0; s=String(s||''); for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return (h%900)+10; }
 function mapSanityProject(p){
