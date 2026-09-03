@@ -1091,39 +1091,48 @@ const sImg = (url, params)=> url ? url + (url.includes('?')?'&':'?') + (params||
 function seedFromSlug(s){ let h=0; s=String(s||''); for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return (h%900)+10; }
 function mapSanityProject(p){
   return { id:p.slug||p._id, slug:p.slug||p._id, cat:p.cat||'Architecture', status:p.status||'Concept',
-    year:p.year||'', area:p.area||'', lat:p.lat, lng:p.lng,
-    t:p.t||{en:'',ro:''}, loc:p.loc||{en:'',ro:''}, excerpt:p.excerpt||{en:'',ro:''}, concept:p.concept||{en:'',ro:''},
-    onHome:!!p.onHome, onMap:!!p.onMap, state:'published', seed:seedFromSlug(p.slug),
+    year:p.year||'', area:p.area||'', lat:(typeof p.lat==='number'?p.lat:null), lng:(typeof p.lng==='number'?p.lng:null),
+    t:{en:p.titleEn||p.titleRo||'', ro:p.titleRo||p.titleEn||''},
+    loc:{en:p.locationEn||p.locationRo||'', ro:p.locationRo||p.locationEn||''},
+    excerpt:{en:p.excerptEn||'', ro:p.excerptRo||''},
+    concept:{en:p.conceptEn||'', ro:p.conceptRo||''},
+    onHome:p.onHome!==false, onMap:p.onMap!==false, feature:!!p.feature,
+    state:'published', seed:seedFromSlug(p.slug),
     cover:p.cover||null, gallery:Array.isArray(p.gallery)?p.gallery.filter(Boolean):[] };
 }
+
 async function loadFromSanity(){
   if(typeof fetch!=='function') return;
+  const notDraft = '!(_id in path("drafts.**"))';
   const groq = `{
-    "projects": *[_type=="project" && archived!=true]|order(order asc, _createdAt asc){
-      "slug":slug.current,"cat":category,status,year,area,"t":title,"loc":location,
-      excerpt,concept,onHome,onMap,lat,lng,"cover":cover.asset->url,"gallery":gallery[].asset->url
+    "projects": *[_type=="project" && ${notDraft}]|order(order asc, _createdAt asc){
+      "slug":slug.current,"cat":category,status,year,area,
+      titleRo,titleEn,locationRo,locationEn,excerptRo,excerptEn,conceptRo,conceptEn,
+      onHome,onMap,feature,lat,lng,
+      "cover":cover.asset->url,"gallery":gallery[].asset->url
     },
-    "settings": *[_type=="siteSettings"][0]{
-      heroTitle,heroSub,intro,
-      "contact":{"email":email,"phone":phone,"location":location,"instagram":instagram,"facebook":facebook}
-    }
+    "team": *[_type=="member" && ${notDraft}]|order(order asc){name,roleRo,roleEn,"photo":photo.asset->url},
+    "clients": *[_type=="client" && ${notDraft}]|order(order asc){name,url,"logo":logo.asset->url}
   }`;
   const url = `https://${SANITY.projectId}.apicdn.sanity.io/v${SANITY.apiVersion}/data/query/${SANITY.dataset}?query=${encodeURIComponent(groq)}`;
   try{
     const res = await fetch(url); if(!res.ok) return;
     const {result} = await res.json(); if(!result) return;
+
     if(Array.isArray(result.projects) && result.projects.length){
       STATE.projects = result.projects.map(mapSanityProject);
     }
-    const s = result.settings;
-    if(s){
-      if(s.heroTitle) STATE.home.heroTitle = s.heroTitle;
-      if(s.heroSub)   STATE.home.heroSub   = s.heroSub;
-      if(s.intro)     STATE.home.intro     = s.intro;
-      if(s.contact){ Object.keys(s.contact).forEach(k=>{ if(s.contact[k]) STATE.contact[k]=s.contact[k]; }); }
+    if(Array.isArray(result.team) && result.team.length){
+      STATE.team = result.team.map((m,i)=>({
+        img:'sanity_'+i, n:m.name||'', r:{en:m.roleEn||m.roleRo||'', ro:m.roleRo||m.roleEn||''},
+        photoUrl:m.photo||null
+      }));
+    }
+    if(Array.isArray(result.clients) && result.clients.length){
+      STATE.clients = result.clients.map(c=>({ n:c.name||'', url:c.url||'', logo:c.logo||'' }));
     }
     renderAll();
-  }catch(e){ /* keep demo data */ }
+  }catch(e){ /* keep built-in data */ }
 }
 
 /* =========================================================
@@ -1206,7 +1215,7 @@ function renderScales(){
 function renderTeam(){
   const g=$('#team'); if(!g) return; g.innerHTML='';
   STATE.team.forEach(m=>{ const el=document.createElement('div'); el.className='member';
-    el.innerHTML=`<img class="member__img" alt="${m.n}" src="${(typeof PHOTOS!=='undefined'&&PHOTOS[m.img])||''}">
+    el.innerHTML=`<img class="member__img" alt="${m.n}" src="${m.photoUrl||(typeof PHOTOS!=='undefined'&&PHOTOS[m.img])||''}">
       <div class="member__cap"><b>${m.n}</b><span>${L(m.r)}</span></div>`;
     g.appendChild(el); });
 }
