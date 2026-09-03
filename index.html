@@ -281,6 +281,19 @@ section{position:relative}
 .member__cap b{font-family:var(--display); font-weight:600; font-size:17px; display:block}
 .member__cap span{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--sand); text-transform:uppercase}
 
+/* ---- former members ---- */
+.alumni{margin-top:clamp(38px,5vw,62px); padding-top:clamp(26px,3vw,34px); border-top:1px solid var(--line)}
+.alumni__title{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted); font-weight:400; margin:0 0 18px}
+.alumni__list{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:10px 28px}
+.alumni__list li{font-size:15px; color:var(--text-dim); position:relative}
+.alumni__list li::after{content:"·"; position:absolute; right:-16px; color:var(--line-2)}
+.alumni__list li:last-child::after{content:""}
+@media(max-width:600px){ .alumni__list{gap:8px 20px} .alumni__list li{font-size:14px} }
+/* logo image from CMS */
+.nav__logo img{height:26px; width:auto; display:block}
+.footer__brand img{height:34px; width:auto; display:block; margin-bottom:18px}
+
 /* ============ CLIENTS ============ */
 .clients{background:var(--bg)}
 .clients__grid{
@@ -655,6 +668,10 @@ form{display:grid; gap:18px}
       <p class="sec__lead" data-i="studio_lead">We work across scales — private homes and interiors, public space, metropolitan strategy and future-oriented urban research — connecting BIM, low-energy design and applied research with real, lived experience.</p>
     </div>
     <div class="team reveal" id="team"></div>
+    <div class="alumni reveal" id="alumni" hidden>
+      <h3 class="alumni__title" id="alumniTitle"></h3>
+      <ul class="alumni__list" id="alumniList"></ul>
+    </div>
   </div>
 </section>
 
@@ -917,6 +934,7 @@ const DEFAULTS = {
     {a:{en:'Nature-based solutions',ro:'Soluții nature-based'},b:{en:'Climate',ro:'Climă'}},
     {a:{en:'Metropolitan mobility',ro:'Mobilitate metropolitană'},b:{en:'Systems',ro:'Sisteme'}},
   ],
+  settings:{ logo:'', favicon:'', formerMembers:[], formerTitle:{en:'Previously part of the team', ro:'Au făcut parte din echipă'} },
   clients:[
     {n:'Irina Schrotter', url:'https://irinaschrotter.com/', logo:''},
     {n:'IQOS', url:'https://www.iqos.ro/', logo:''},
@@ -1057,7 +1075,11 @@ async function loadFromSanity(){
       "cover":cover.asset->url,"gallery":gallery[].asset->url
     },
     "team": *[_type=="member" && ${notDraft}]|order(order asc){name,roleRo,roleEn,"photo":photo.asset->url},
-    "clients": *[_type=="client" && ${notDraft}]|order(order asc){name,url,"logo":logo.asset->url}
+    "clients": *[_type=="client" && ${notDraft}]|order(order asc){name,url,"logo":logo.asset->url},
+    "settings": *[_type=="siteSettings" && ${notDraft}][0]{
+      "logo":logo.asset->url,"favicon":favicon.asset->url,
+      formerMembers,formerMembersTitleRo,formerMembersTitleEn
+    }
   }`;
   const url = `https://${SANITY.projectId}.apicdn.sanity.io/v${SANITY.apiVersion}/data/query/${SANITY.dataset}?query=${encodeURIComponent(groq)}`;
   try{
@@ -1075,6 +1097,14 @@ async function loadFromSanity(){
     }
     if(Array.isArray(result.clients) && result.clients.length){
       STATE.clients = result.clients.map(c=>({ n:c.name||'', url:c.url||'', logo:c.logo||'' }));
+    }
+    const st=result.settings;
+    if(st){
+      if(st.logo) STATE.settings.logo=st.logo;
+      if(st.favicon) STATE.settings.favicon=st.favicon;
+      if(Array.isArray(st.formerMembers)) STATE.settings.formerMembers=st.formerMembers.filter(Boolean);
+      if(st.formerMembersTitleRo) STATE.settings.formerTitle.ro=st.formerMembersTitleRo;
+      if(st.formerMembersTitleEn) STATE.settings.formerTitle.en=st.formerMembersTitleEn;
     }
     renderAll();
   }catch(e){ /* keep built-in data */ }
@@ -1229,7 +1259,41 @@ function renderClients(){
     g.appendChild(a);
   });
 }
-function renderAll(){ renderWork(); renderServices(); renderProcess(); renderScales(); renderTeam(); renderResearch(); renderSelects(); renderMap(); applyDynamic(); renderHeroFeature(); renderClients(); }
+function renderAlumni(){
+  const box=document.getElementById('alumni'), ul=document.getElementById('alumniList'), tt=document.getElementById('alumniTitle');
+  if(!box||!ul) return;
+  const list=(STATE.settings && STATE.settings.formerMembers)||[];
+  if(!list.length){ box.hidden=true; return; }
+  box.hidden=false;
+  if(tt) tt.textContent = L(STATE.settings.formerTitle||{en:'',ro:''});
+  ul.innerHTML='';
+  list.forEach(n=>{ const li=document.createElement('li'); li.textContent=String(n); ul.appendChild(li); });
+}
+
+function renderBrand(){
+  const url=(STATE.settings&&STATE.settings.logo)||'';
+  if(url){
+    document.querySelectorAll('.nav__logo, .footer__brand').forEach(box=>{
+      if(box.querySelector('img[data-cms-logo]')) return;
+      const svg=box.querySelector('svg'); if(!svg) return;
+      const img=document.createElement('img');
+      img.setAttribute('data-cms-logo',''); img.alt='ECHO'; img.src=url;
+      img.onerror=()=>{ img.remove(); svg.style.display=''; };   // keep default logo if it fails
+      svg.style.display='none';
+      box.insertBefore(img, svg);
+    });
+  }
+  const fav=(STATE.settings&&STATE.settings.favicon)||'';
+  if(fav){
+    let link=document.querySelector('link[rel="icon"]');
+    if(!link){ link=document.createElement('link'); link.rel='icon'; document.head.appendChild(link); }
+    link.href=fav;
+    let apple=document.querySelector('link[rel="apple-touch-icon"]');
+    if(!apple){ apple=document.createElement('link'); apple.rel='apple-touch-icon'; document.head.appendChild(apple); }
+    apple.href=fav;
+  }
+}
+function renderAll(){ renderWork(); renderServices(); renderProcess(); renderScales(); renderTeam(); renderResearch(); renderSelects(); renderMap(); applyDynamic(); renderHeroFeature(); renderClients(); renderAlumni(); renderBrand(); }
 
 /* ---------------- LANG ---------------- */
 function applyLang(l){
